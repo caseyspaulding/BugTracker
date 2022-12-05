@@ -4,7 +4,7 @@ namespace IssueTracker.Services.Interfaces
 {
     public interface IBTRolesService
     {
-        public Task<bool> IsUserInRoldAsync(BTUser user, string roleName);
+        public Task<bool> IsUserInRoleAsync(BTUser user, string roleName);
 
         public Task<IEnumerable<string>> GetUserRolesAsync(BTUser user);
 

@@ -57,7 +57,7 @@ namespace IssueTracker.Services
             return result;
         }
 
-        public async Task<bool> IsUserInRoldAsync(BTUser user, string roleName)
+        public async Task<bool> IsUserInRoleAsync(BTUser user, string roleName)
         {
             bool result = await _userManager.IsInRoleAsync(user, roleName);
             return result;  
