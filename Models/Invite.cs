@@ -31,7 +31,7 @@ namespace IssueTracker.Models
         public string InviteeId { get; set; }
 
         [DisplayName("Invitee Email")]
-        public int InviteeEmail { get; set; }
+        public string InviteeEmail { get; set; }
 
         [DisplayName("Invitee First Name")]
         public string InviteeFirstName { get; set; }
