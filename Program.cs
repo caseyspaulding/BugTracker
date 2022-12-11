@@ -3,7 +3,9 @@ using IssueTracker.Models;
 using IssueTracker.Services;
 using IssueTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,11 @@ builder.Services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
 builder.Services.AddScoped<IBTProjectService, BTProjectService>();
 builder.Services.AddScoped<IBTTicketService, BTTicketService>();
 builder.Services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
+
+builder.Services.AddScoped<IEmailSender, BTEmailService>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+
 
 // ----- END Custom Services ----- //
 
