@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 namespace IssueTracker.Services
 {
 
-    public class BTNotification : IBTNotificationService
+    public class BTNotificationService : IBTNotificationService
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
         private readonly IBTRolesService _rolesService;
 
-        public BTNotification(ApplicationDbContext context,
+        public BTNotificationService(ApplicationDbContext context,
                                 IEmailSender emailSender,
                                 IBTRolesService rolesService)
         {
@@ -120,9 +120,22 @@ namespace IssueTracker.Services
             }
         }
 
-        public Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members)
+        public async Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (BTUser btUser in members)
+                {
+                    notification.RecipientId = btUser.Id;
+                    await SendEmailNotificationAsync(notification, notification.Title);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
