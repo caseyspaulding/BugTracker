@@ -5,20 +5,27 @@ using IssueTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+//Adding controller support
+builder.Services.AddControllers();
 
+//var connectionString = builder.Configuration.GetSection("pgSettings")["pgConnection"];
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString, 
+    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
 builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultUI()
-    .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
 
 // ----- Custom Services ----- //
 builder.Services.AddScoped<IBTRolesService, BTRolesService>();
@@ -30,17 +37,29 @@ builder.Services.AddScoped<IBTNotificationService, BTNotificationService>();
 builder.Services.AddScoped<IBTInviteService, BTInviteService>();    
 builder.Services.AddScoped<IBTFileService, BTFileService>();
 
+
 // -- Email Service -- //
 builder.Services.AddScoped<IEmailSender, BTEmailService>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 // -- Email Service End -- //
 
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 // ----- END Custom Services ----- //
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// ---- Data Utility ------------- //
+
+//await DataUtility.ManageDataAsync(app);
+
+var scope = app.Services.CreateScope();
+
+await DataUtility.ManageDataAsync(app);
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
