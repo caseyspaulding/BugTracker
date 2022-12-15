@@ -2,11 +2,13 @@
 using IssueTracker.Models;
 using IssueTracker.Models.ViewModels;
 using IssueTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IssueTracker.Controllers
 {
+    [Authorize]
     public class UserRolesController : Controller
     {
         private readonly IBTRolesService _rolesService;
