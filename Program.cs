@@ -38,6 +38,7 @@ builder.Services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
 builder.Services.AddScoped<IBTNotificationService, BTNotificationService>();
 builder.Services.AddScoped<IBTInviteService, BTInviteService>();    
 builder.Services.AddScoped<IBTFileService, BTFileService>();
+builder.Services.AddScoped<IBTLookupService, BTLookupService>();
 
 
 // -- Email Service -- //
