@@ -12,6 +12,7 @@ using IssueTracker.Models.ViewModels;
 using IssueTracker.Services.Interfaces;
 using IssueTracker.Models.Enums;
 
+
 namespace IssueTracker.Controllers
 {
     public class ProjectsController : Controller
@@ -177,7 +178,7 @@ namespace IssueTracker.Controllers
             return RedirectToAction("Edit");
         }
 
-        // GET: Projects/Delete/5
+        // GET: Projects/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null || _context.Projects == null)
@@ -186,8 +187,8 @@ namespace IssueTracker.Controllers
             }
 
             int companyId = User.Identity.GetCompanyId().Value;
-
             var project = await _projectService.GetProjectByIdAsync(id.Value,companyId);
+
             if (project == null)
             {
                 return NotFound();
@@ -196,7 +197,7 @@ namespace IssueTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Projects/Archive/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -204,9 +205,40 @@ namespace IssueTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             var project = await _projectService.GetProjectByIdAsync(id, companyId);
-           
             await _projectService.ArchiveprojectAsync(project);
            
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Projects/Restore/5
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null || _context.Projects == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity.GetCompanyId().Value;
+            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+
+        // POST: Projects/Archive/5
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            var project = await _projectService.GetProjectByIdAsync(id, companyId);
+            await _projectService.RestoreProjectAsync(project);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -216,3 +248,5 @@ namespace IssueTracker.Controllers
         }
     }
 }
+
+

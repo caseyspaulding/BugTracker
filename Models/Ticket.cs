@@ -26,10 +26,14 @@ namespace IssueTracker.Models
         [DataType(DataType.Date)]
         [DisplayName("Updated")]
         public DateTimeOffset? Updated { get; set; }  
+
         // -- ? Means Database can accept NULL for this field 
 
         [DisplayName("Archived")]
         public bool Archived { get; set; }
+
+        [DisplayName("Archived By Project")]
+        public bool ArchivedByProject { get; set; }
 
 
         // --- Foreign Keys ---  //
