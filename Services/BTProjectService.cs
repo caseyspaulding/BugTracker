@@ -389,7 +389,7 @@ namespace IssueTracker.Services
 
                 throw;
             }
-
+        }
         // CRUD - Update
         public async Task UpdateProjectAsync(Project project)
         {

@@ -229,7 +229,7 @@ namespace IssueTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Archive/5
+        // POST: Projects/Restore/5
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
