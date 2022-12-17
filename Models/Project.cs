@@ -21,9 +21,11 @@ namespace IssueTracker.Models
         public string Description { get; set; }
 
         [DisplayName("Start Date")]
+        [DataType(DataType.Date)] 
         public DateTimeOffset StartDate { get; set; }
 
         [DisplayName("End Date")]
+        [DataType(DataType.Date)]
         public DateTimeOffset EndDate { get; set; }
 
         [DisplayName("Priority")]       //   ---- Foreign key Reference to get to the Project Priority Table --  //
