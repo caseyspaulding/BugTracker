@@ -10,14 +10,18 @@ namespace IssueTracker.Services
 {
     public class BTProjectService : IBTProjectService
     {
+        #region Properties
         private readonly ApplicationDbContext _context;
         private readonly IBTRolesService _rolesService;
+        #endregion
 
-        public BTProjectService(ApplicationDbContext context, IBTRolesService rolesService) 
+        #region Constructor
+        public BTProjectService(ApplicationDbContext context, IBTRolesService rolesService)
         {
             _context = context;
             _rolesService = rolesService;
         }
+        #endregion
 
         // CRUD - Create - CS
 
@@ -52,7 +56,7 @@ namespace IssueTracker.Services
                 await AddUserToProjectAsync(userId, projectId);
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error removing new PM. - Error: {ex.Message}");
                 return false;
@@ -63,10 +67,10 @@ namespace IssueTracker.Services
         {
             BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
-            if(user != null)
+            if (user != null)
             {
                 Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
-                if(!await IsUserOnProjectAsync(userId, projectId))
+                if (!await IsUserOnProjectAsync(userId, projectId))
                 {
                     try
                     {
@@ -112,7 +116,7 @@ namespace IssueTracker.Services
 
                 throw;
             }
-           
+
         }
 
         public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
@@ -130,11 +134,11 @@ namespace IssueTracker.Services
         {
             List<Project> projects = new(); // List of projects instanciated called projects
 
-            projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived )
+            projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == false)
                                             .Include(p => p.Members)
                                             .Include(p => p.Tickets)
                                                 .ThenInclude(t => t.Comments)
-                               // --- Query Methods .ThenInclude using Linq available only after .Include --- //
+                                            // --- Query Methods .ThenInclude using Linq available only after .Include --- //
                                             .Include(p => p.Tickets)
                                                 .ThenInclude(t => t.Attachments)
                                             .Include(p => p.Tickets)
@@ -161,16 +165,48 @@ namespace IssueTracker.Services
             List<Project> projects = await GetAllProjectsByCompany(companyId);
             int priorityId = await LookupProjectPriorityId(priorityName);
 
-            return projects.Where(p=>p.ProjectPriorityId == priorityId).ToList();   
+            return projects.Where(p => p.ProjectPriorityId == priorityId).ToList();
 
         }
 
         public async Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
         {
-            // - Get entire list of projects per company -- based on sent in -- //
-            List<Project> projects = await GetAllProjectsByCompany(companyId);
-            
-            return projects.Where(p=> p.Archived == true).ToList();
+            try
+            {
+                // - Get entire list of projects per company -- based on sent in -- //
+                List<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == true)
+                                            .Include(p => p.Members)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.Comments)
+                                            // --- Query Methods .ThenInclude using Linq available only after .Include --- //
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.Attachments)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.DeveloperUser)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.Notifications)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.OwnerUser)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.History)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketStatus)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketPriority)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketType)
+                                            .Include(p => p.ProjectPriority)
+                                            .ToListAsync();
+
+                return projects;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
         }
 
         public Task<List<BTUser>> GetDevelopersOnProjectAsync(int projectId)
@@ -181,13 +217,35 @@ namespace IssueTracker.Services
         // CRUD - Read
         public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
         {
-            Project project = await _context.Projects
-                                            .Include(p=>p.Tickets) //--- link .Include to access Tickets Table
-                                            .Include(p=>p.Members)
-                                            .Include(p=>p.ProjectPriority)
-                                            .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId); 
+            try
+            {
+                //Project project = await _context.Projects
+                //                            .Include(p => p.Tickets) //--- link .Include to access Tickets Table
+                //                            .Include(p => p.Members)
+                //                            .Include(p => p.ProjectPriority)
+                //                            .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
 
-            return project; 
+                Project project = await _context.Projects
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketPriority)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketStatus)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketType)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.DeveloperUser)
+                                            .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.OwnerUser)
+                                            .Include(p => p.Members)
+                                            .Include(p => p.ProjectPriority)
+                                            .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+                return project;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<BTUser> GetProjectManagerAsync(int projectId)
@@ -195,10 +253,10 @@ namespace IssueTracker.Services
             Project project = await _context.Projects
                                             .Include(p => p.Members)
                                             .FirstOrDefaultAsync(p => p.Id == projectId);
-            
-            foreach(BTUser member in project?.Members)
+
+            foreach (BTUser member in project?.Members)
             {
-                if(await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                 {
                     return member;
                 }
@@ -216,7 +274,7 @@ namespace IssueTracker.Services
 
             foreach (var user in project.Members)
             {
-                if(await _rolesService.IsUserInRoleAsync(user,role))
+                if (await _rolesService.IsUserInRoleAsync(user, role))
                 {
                     members.Add(user);
                 }
@@ -234,10 +292,10 @@ namespace IssueTracker.Services
             try
             {
                 List<Project> userProjects = (await _context.Users
-                    .Include(u=>u.Projects)
-                        .ThenInclude(p=>p.Company)
-                    .Include(u=>u.Projects)
-                        .ThenInclude(p=>p.Members)
+                    .Include(u => u.Projects)
+                        .ThenInclude(p => p.Company)
+                    .Include(u => u.Projects)
+                        .ThenInclude(p => p.Members)
                     .Include(u => u.Projects)
                         .ThenInclude(p => p.Tickets)
                     .Include(u => u.Projects)
@@ -254,7 +312,7 @@ namespace IssueTracker.Services
                             .ThenInclude(t => t.TicketStatus)
                     .Include(u => u.Projects)
                         .ThenInclude(t => t.Tickets)
-                            .ThenInclude(t => t.TicketType) 
+                            .ThenInclude(t => t.TicketType)
                     .FirstOrDefaultAsync(u => u.Id == userId)).Projects.ToList();
 
                 return userProjects;
@@ -270,16 +328,16 @@ namespace IssueTracker.Services
         {
             List<BTUser> users = await _context.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToListAsync();
 
-            return users.Where(u=>u.CompanyId == companyId).ToList();
+            return users.Where(u => u.CompanyId == companyId).ToList();
         }
 
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
         {
-            Project project = await _context.Projects.Include(p=>p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
+            Project project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
 
             bool result = false;
 
-            if(project != null)
+            if (project != null)
             {
                 result = project.Members.Any(m => m.Id == userId);
             }
@@ -296,14 +354,14 @@ namespace IssueTracker.Services
         public async Task RemoveProjectManagerAsync(int projectId)
         {
             Project project = await _context.Projects
-                                            .Include(p=>p.Members)
-                                            .FirstOrDefaultAsync(p=>p.Id == projectId);
+                                            .Include(p => p.Members)
+                                            .FirstOrDefaultAsync(p => p.Id == projectId);
 
             try
             {
-                foreach(BTUser member in project?.Members)
+                foreach (BTUser member in project?.Members)
                 {
-                    if(await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                    if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                     {
                         await RemoveUserFromProjectAsync(member.Id, projectId);
                     }
@@ -319,7 +377,7 @@ namespace IssueTracker.Services
         {
             try
             {
-                BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId); 
+                BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
 
                 try
@@ -330,12 +388,12 @@ namespace IssueTracker.Services
                         await _context.SaveChangesAsync();
                     }
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     throw;
-                }          
-            } 
-            catch(Exception ex)
+                }
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"******* ERROR ******** - Error Removing User from project. ---> {ex.Message}");
             }
@@ -346,22 +404,22 @@ namespace IssueTracker.Services
             try
             {
                 List<BTUser> members = await GetProjectMembersByRoleAsync(projectId, role);
-                Project project = await _context.Projects.FirstOrDefaultAsync(p=>p.Id == projectId);
-                
-                foreach(BTUser btuser in members)
+                Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+
+                foreach (BTUser btuser in members)
                 {
                     try
                     {
-                        project.Members.Remove(btuser); 
+                        project.Members.Remove(btuser);
                         await _context.SaveChangesAsync();
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         throw;
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"**** ERROR **** - Error removing users from project. -->{ex.Message}");
                 throw;
@@ -402,7 +460,7 @@ namespace IssueTracker.Services
             {
 
                 throw;
-            } 
+            }
         }
     }
 }

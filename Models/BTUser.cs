@@ -30,7 +30,8 @@ namespace IssueTracker.Models
         [Display(Name = "File Extension")]
         public string AvatarContentType { get; set; }
 
-        public int? CompanyId { get; set; }
+
+        public int CompanyId { get; set; }
 
 
         // -- Nav properties create relationships between tables and models. --//
