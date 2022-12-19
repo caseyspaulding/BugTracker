@@ -1,7 +1,6 @@
 ﻿using IssueTracker.Data;
 using IssueTracker.Models;
 using IssueTracker.Services.Interfaces;
-using IssueTracker.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssueTracker.Services
@@ -12,7 +11,7 @@ namespace IssueTracker.Services
 
         public BTTicketHistoryService(ApplicationDbContext context)
         {
-            
+
             _context = context;
         }
 
@@ -170,13 +169,13 @@ namespace IssueTracker.Services
                 List<Project> projects = (await _context.Companies
                                                         .Include(c => c.Projects)
                                                            .ThenInclude(p => p.Tickets)
-                                                                .ThenInclude(t => t.History)
-                                                                    .ThenInclude(h => h.User)
+                                                         .ThenInclude(t => t.History)
+                                                         .ThenInclude(h => h.User)
                                                          .FirstOrDefaultAsync(c => c.Id == companyId)).Projects.ToList();
                 List<Ticket> tickets = projects.SelectMany(p => p.Tickets).ToList();
 
-                List<TicketHistory> ticketHistories = tickets.SelectMany(t => t.History).ToList(); 
-                
+                List<TicketHistory> ticketHistories = tickets.SelectMany(t => t.History).ToList();
+
                 return ticketHistories;
             }
             catch (Exception)
@@ -190,13 +189,13 @@ namespace IssueTracker.Services
         {
             try
             {
-                Project project = await _context.Projects.Where(p=>p.CompanyId == companyId)
-                                                         .Include(p=>p.Tickets)
-                                                            .ThenInclude(t=>t.History)
+                Project project = await _context.Projects.Where(p => p.CompanyId == companyId)
+                                                         .Include(p => p.Tickets)
+                                                            .ThenInclude(t => t.History)
                                                                 .ThenInclude(h => h.User)
-                                                          .FirstOrDefaultAsync(p=>p.Id == projectId);
+                                                          .FirstOrDefaultAsync(p => p.Id == projectId);
 
-                List<TicketHistory> ticketHistory = project.Tickets.SelectMany(t=>t.History).ToList();
+                List<TicketHistory> ticketHistory = project.Tickets.SelectMany(t => t.History).ToList();
 
                 return ticketHistory;
             }

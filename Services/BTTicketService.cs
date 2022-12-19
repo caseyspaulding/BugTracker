@@ -57,7 +57,7 @@ namespace IssueTracker.Services
             Ticket ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
             try
             {
-                if(ticket != null)
+                if (ticket != null)
                 {
                     try
                     {
@@ -197,8 +197,8 @@ namespace IssueTracker.Services
         {
             try
             {
-                List<Ticket> tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t=>t.Archived == true).ToList();
-                return tickets; 
+                List<Ticket> tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t => t.Archived == true).ToList();
+                return tickets;
             }
             catch (Exception)
             {
@@ -245,7 +245,7 @@ namespace IssueTracker.Services
 
             try
             {
-                tickets = (await GetAllTicketsByStatusAsync(companyId,statusName)).Where(t=>t.ProjectId == projectId).ToList();
+                tickets = (await GetAllTicketsByStatusAsync(companyId, statusName)).Where(t => t.ProjectId == projectId).ToList();
                 return tickets;
             }
             catch (Exception)
@@ -275,7 +275,14 @@ namespace IssueTracker.Services
         {
             try
             {
-                return await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+                return await _context.Tickets
+                                     .Include(t => t.DeveloperUser)
+                                     .Include(t => t.OwnerUser)
+                                     .Include(t => t.Project)
+                                     .Include(t => t.TicketPriority)
+                                     .Include(t => t.TicketStatus)
+                                     .Include(t => t.TicketType)
+                                     .FirstOrDefaultAsync(t => t.Id == ticketId);
             }
             catch (Exception)
             {
@@ -290,9 +297,9 @@ namespace IssueTracker.Services
 
             try
             {
-                Ticket ticket = (await GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t=>t.Id== ticketId);
+                Ticket ticket = (await GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t => t.Id == ticketId);
 
-                if(ticket?.DeveloperUserId != null)
+                if (ticket?.DeveloperUserId != null)
                 {
                     developer = ticket.DeveloperUser;
                 }
@@ -309,16 +316,16 @@ namespace IssueTracker.Services
         public async Task<List<Ticket>> GetTicketsByRoleAsync(string role, string userId, int companyId)
         {
             List<Ticket> tickets = new();
-            
+
             try
             {
-                if(role == Roles.Admin.ToString())
+                if (role == Roles.Admin.ToString())
                 {
-                    tickets = await GetAllTicketsByCompanyAsync(companyId); 
+                    tickets = await GetAllTicketsByCompanyAsync(companyId);
                 }
-                else if(role == Roles.Developer.ToString())
+                else if (role == Roles.Developer.ToString())
                 {
-                    tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t=>t.DeveloperUserId== userId).ToList(); 
+                    tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t => t.DeveloperUserId == userId).ToList();
                 }
                 else if (role == Roles.Submitter.ToString())
                 {
@@ -342,7 +349,7 @@ namespace IssueTracker.Services
         {
             BTUser btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             List<Ticket> tickets = new();
-            
+
             try
             {
                 if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Admin.ToString()))
@@ -354,8 +361,8 @@ namespace IssueTracker.Services
                 else if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Developer.ToString()))
                 {
                     tickets = (await _projectService.GetAllProjectsByCompany(companyId))
-                                                    .SelectMany(p=>p.Tickets)
-                                                    .Where(t=>t.DeveloperUserId == userId)
+                                                    .SelectMany(p => p.Tickets)
+                                                    .Where(t => t.DeveloperUserId == userId)
                                                     .ToList();
                 }
                 else if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Submitter.ToString()))
@@ -385,7 +392,7 @@ namespace IssueTracker.Services
         {
             try
             {
-                TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p=>p.Name == priorityName);
+                TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p => p.Name == priorityName);
                 return priority?.Id;
             }
             catch (Exception)
