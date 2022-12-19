@@ -64,6 +64,16 @@ namespace IssueTracker.Controllers
             return View(tickets);
         }
 
+        public async Task<IActionResult> ArchivedTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Ticket> tickets = await _ticketService.GetArchivedTicketsAsync(companyId);
+
+            return View(tickets);   
+        }
+
+
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
