@@ -2,11 +2,16 @@
 using IssueTracker.Extensions;
 using IssueTracker.Models;
 using IssueTracker.Models.Enums;
+using IssueTracker.Models.ViewModels;
+using IssueTracker.Services;
 using IssueTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+
 
 namespace IssueTracker.Controllers
 {
@@ -17,22 +22,26 @@ namespace IssueTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTTicketService _ticketService;
+        private readonly IBTFileService _fileService;
 
-        public TicketsController(ApplicationDbContext context,
-                                 UserManager<BTUser> userManager,
-                                 IBTProjectService projectService,
-                                 IBTLookupService lookupService,
-                                 IBTTicketService ticketService)
-        {
-            _context = context;
-            _userManager = userManager;
-            _projectService = projectService;
-            _lookupService = lookupService;
-            _ticketService = ticketService;
-        }
 
-        // GET: Tickets
-        public async Task<IActionResult> Index()
+		public TicketsController(ApplicationDbContext context,
+								 UserManager<BTUser> userManager,
+								 IBTProjectService projectService,
+								 IBTLookupService lookupService,
+								 IBTTicketService ticketService,
+								 IBTFileService fileService)
+		{
+			_context = context;
+			_userManager = userManager;
+			_projectService = projectService;
+			_lookupService = lookupService;
+			_ticketService = ticketService;
+			_fileService = fileService;
+		}
+
+		// GET: Tickets
+		public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(await applicationDbContext.ToListAsync());
@@ -72,6 +81,46 @@ namespace IssueTracker.Controllers
             return View(tickets);
         }
 
+
+
+        [Authorize(Roles="Admin, ProjectManager")]
+        public async Task<IActionResult> UnassignedTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            string btUserId = _userManager.GetUserId(User);
+
+            List<Ticket> tickets = await _ticketService.GetUnassignedTicketsAsync(companyId);
+
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                return View(tickets);
+            }
+            else
+            {
+                List<Ticket> pmTickets = new();
+
+                foreach(Ticket ticket in tickets)
+                {
+                    if(await _projectService.IsAssignedProjectManagerAsync(btUserId, ticket.ProjectId))
+                    {
+                        pmTickets.Add(ticket);
+                    }
+                }
+                return View(pmTickets);
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> AssignedDeveloper(int id)
+        {
+            AssignDeveloperViewModel model = new();
+
+            model.Ticket = await _ticketService.GetTicketByIdAsync(id);
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.Id, nameof(Roles.Developer)), "Id", "Fullname");
+
+            return View(model);
+        }
 
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -248,10 +297,35 @@ namespace IssueTracker.Controllers
             return RedirectToAction("Details", new {id = ticketComment.TicketId});
         }
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+		{
+			string statusMessage;
 
+			if (ModelState.IsValid && ticketAttachment.FormFile != null)
+            {
+				ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+				ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+				ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
 
-        // GET: Tickets/Archive/5
-        public async Task<IActionResult> Archive(int? id)
+				ticketAttachment.Created = DateTimeOffset.Now;
+				ticketAttachment.UserId = _userManager.GetUserId(User);
+
+				await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+				statusMessage = "Success: New attachment added to Ticket.";
+			}
+			else
+			{
+				statusMessage = "Error: Invalid data.";
+
+			}
+
+			return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+		}
+
+		// GET: Tickets/Archive/5
+		public async Task<IActionResult> Archive(int? id)
         {
             if (id == null || _context.Tickets == null)
             {
@@ -315,8 +389,19 @@ namespace IssueTracker.Controllers
             return View(ticket);
         }
 
-        // POST: Tickets/Restore/5
-        [HttpPost, ActionName("Restore")]
+		public async Task<IActionResult> ShowFile(int id)
+		{
+			TicketAttachment ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
+			string fileName = ticketAttachment.FileName;
+			byte[] fileData = ticketAttachment.FileData;
+			string ext = Path.GetExtension(fileName).Replace(".", "");
+
+			Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+			return File(fileData, $"application/{ext}");
+		}
+
+		// POST: Tickets/Restore/5
+		[HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {

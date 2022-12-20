@@ -9,8 +9,11 @@ namespace IssueTracker.Services.Interfaces
         public Task UpdateTicketAsync(Ticket ticket);
         public Task<Ticket> GetTicketByIdAsync(int ticketId);
         public Task ArchiveTicketAsync(Ticket ticket);
+		public Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
+		public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
+		public Task AddTicketCommentAsync(TicketComment ticketComment);
 
-        public Task AddTicketCommentAsync(TicketComment ticketComment);
+
 
         public Task AssignTicketAsync(int ticketId, string userId);
         public Task<List<Ticket>> GetArchivedTicketsAsync(int companyId);
@@ -25,6 +28,7 @@ namespace IssueTracker.Services.Interfaces
         public Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId);
         public Task<List<Ticket>> GetProjectTicketsByPriorityAsync(string priorityName, int companyId, int projectId);
         public Task<List<Ticket>> GetProjectTicketsByTypeAsync(string typeName, int companyId, int projectId);
+        public Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId);
 
 
         public Task<int?> LookupTicketPriorityIdAsync(string priorityName);

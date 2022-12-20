@@ -59,7 +59,7 @@ namespace IssueTracker.Services
             if (!string.IsNullOrWhiteSpace(file))
             {
                 fileImage = Path.GetFileName(file).Replace(".", "");
-                return $"/img/png/{fileImage}.png";
+                return $"/img/filetype/{fileImage}.png";
             }
             return fileImage;
         }
