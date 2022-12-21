@@ -97,7 +97,7 @@
                                         <p class="text-muted m-b-0">Project Manager </p>
                                         @if (User.IsInRole(nameof(Roles.Admin)) || (btUser.Id == projectManager.Id))
                                         {
-                                            <a class="btn btn=xs btn-outline-secondary" style="font:small" asp-action="AssignUsers" asp-controller="Projects" asp-route="@Model.Id">Manage Team</a>
+                                            <a class="btn btn-xs btn-outline-secondary" style="font:small" asp-action="AssignUsers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>
                                         }
                                     </div>
 
@@ -170,9 +170,7 @@
                             <hr />
                         </div>
                         <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
-                            @* Project Activity loop [Project Activity
-
-                            e.g. Ticket History] *@
+                            @* Project Activity loop Ticket History] *@
 
                             @foreach (TicketHistory history in await HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, btUser.CompanyId))
                             {
@@ -237,7 +235,7 @@
                                                     }
                                                 </td>
                                                 
-                                                @if (ticket.TicketStatus?.Name == "New")
+                                                @if (ticket.TicketStatus.Name == "New")
                                                 {
                                                     <td><span class="badge-success">@ticket.TicketStatus.Name </span></td>
 

@@ -172,6 +172,7 @@ namespace IssueTracker.Services
                                                          .ThenInclude(t => t.History)
                                                          .ThenInclude(h => h.User)
                                                          .FirstOrDefaultAsync(c => c.Id == companyId)).Projects.ToList();
+
                 List<Ticket> tickets = projects.SelectMany(p => p.Tickets).ToList();
 
                 List<TicketHistory> ticketHistories = tickets.SelectMany(t => t.History).ToList();
@@ -190,7 +191,8 @@ namespace IssueTracker.Services
             try
             {
                 Project project = await _context.Projects.Where(p => p.CompanyId == companyId)
-                                                         .Include(p => p.Tickets)
+                                                       
+                                                            .Include(p => p.Tickets)
                                                             .ThenInclude(t => t.History)
                                                                 .ThenInclude(h => h.User)
                                                           .FirstOrDefaultAsync(p => p.Id == projectId);
