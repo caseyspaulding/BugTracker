@@ -1,4 +1,5 @@
-﻿using IssueTracker.Data;
+﻿using IssueTracker.Controllers;
+using IssueTracker.Data;
 using IssueTracker.Models;
 using IssueTracker.Models.Enums;
 using IssueTracker.Services.Interfaces;
@@ -287,6 +288,39 @@ namespace IssueTracker.Services
             throw new NotImplementedException();
         }
 
+        
+
+        public async Task<List<Project>> GetUnassignedProjectAsync(int companyId)
+        {
+            List<Project> result = new();
+            List<Project> projects = new();
+
+            try
+            {
+                projects = await _context.Projects
+                                         .Include(p => p.ProjectPriority)
+                                         .Where(p => p.CompanyId == companyId)
+                                         .ToListAsync();
+
+                foreach(Project project in projects)
+                {
+                    if((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0) 
+                    {
+                        result.Add(project);
+                    }
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
+
         public async Task<List<Project>> GetUserProjectsAsync(string userId)
         {
             try
@@ -324,8 +358,8 @@ namespace IssueTracker.Services
             }
         }
 
-     
-        
+
+
         public async Task<List<BTUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
         {
             List<BTUser> users = await _context.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToListAsync();
@@ -339,7 +373,7 @@ namespace IssueTracker.Services
             {
                 string projectManagerId = (await GetProjectManagerAsync(projectId))?.Id;
 
-                if(projectManagerId == userId)
+                if (projectManagerId == userId)
                 {
                     return true;
                 }
@@ -354,7 +388,7 @@ namespace IssueTracker.Services
                 throw;
             }
         }
-        
+
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
         {
             Project project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
