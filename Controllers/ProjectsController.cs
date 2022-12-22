@@ -13,13 +13,14 @@ using IssueTracker.Services.Interfaces;
 using IssueTracker.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.Design;
+using IssueTracker.Services;
 
 
 namespace IssueTracker.Controllers
 {
     public class ProjectsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        
         private readonly IBTRolesService _rolesService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
@@ -27,7 +28,7 @@ namespace IssueTracker.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTCompanyInfoService _companyInfoService;
 
-        public ProjectsController(ApplicationDbContext context,
+        public ProjectsController(
                                   IBTRolesService rolesService,
                                   IBTLookupService lookupService,
                                   IBTFileService fileService,
@@ -35,7 +36,7 @@ namespace IssueTracker.Controllers
                                   UserManager<BTUser> userManager,
                                   IBTCompanyInfoService companyInfoService)
         {
-            _context = context;
+       
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -44,26 +45,7 @@ namespace IssueTracker.Controllers
             _companyInfoService = companyInfoService;
         }
 
-        // GET: Projects
-        public async Task<IActionResult> Index()
-        {
-            List<Project> projects = new();
-
-            int companyId = User.Identity.GetCompanyId().Value;
-
-            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
-            {
-
-                projects = await _companyInfoService.GetAllProjectsAsync(companyId);
-            }
-            else
-            {
-                projects = await _projectService.GetAllProjectsByCompany(companyId);
-            }
-
-            return View(projects);
-        }
-
+   
         public async Task<IActionResult> MyProjects()
         {
             string userId = _userManager.GetUserId(User);
@@ -176,7 +158,7 @@ namespace IssueTracker.Controllers
                 }
 
                 // Add selected members
-                foreach(string member  in model.SelectedUsers)
+                foreach(string member in model.SelectedUsers)
                 {
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
@@ -321,10 +303,16 @@ namespace IssueTracker.Controllers
                     }
                     return RedirectToAction("Index");
                 }
-                catch (Exception)
+                catch (DbUpdateConcurrencyException)
                 {
-
-                    throw;
+                    if (!await ProjectExists(model.Project.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
             return RedirectToAction("Edit");
@@ -333,7 +321,7 @@ namespace IssueTracker.Controllers
         // GET: Projects/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
-            if (id == null || _context.Projects == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -365,7 +353,7 @@ namespace IssueTracker.Controllers
         // GET: Projects/Restore/5
         public async Task<IActionResult> Restore(int? id)
         {
-            if (id == null || _context.Projects == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -394,9 +382,11 @@ namespace IssueTracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExists(int id)
         {
-          return _context.Projects.Any(e => e.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            return (await _projectService.GetAllProjectsByCompany(companyId)).Any(p => p.Id == id);
         }
     }
 }

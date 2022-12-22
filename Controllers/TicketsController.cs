@@ -23,29 +23,27 @@ namespace IssueTracker.Controllers
         private readonly IBTLookupService _lookupService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTFileService _fileService;
+        private readonly IBTTicketHistoryService _historyService;
 
 
-		public TicketsController(ApplicationDbContext context,
-								 UserManager<BTUser> userManager,
-								 IBTProjectService projectService,
-								 IBTLookupService lookupService,
-								 IBTTicketService ticketService,
-								 IBTFileService fileService)
-		{
-			_context = context;
-			_userManager = userManager;
-			_projectService = projectService;
-			_lookupService = lookupService;
-			_ticketService = ticketService;
-			_fileService = fileService;
-		}
-
-		// GET: Tickets
-		public async Task<IActionResult> Index()
+        public TicketsController(ApplicationDbContext context,
+                                 UserManager<BTUser> userManager,
+                                 IBTProjectService projectService,
+                                 IBTLookupService lookupService,
+                                 IBTTicketService ticketService,
+                                 IBTFileService fileService,
+                                 IBTTicketHistoryService historyService)
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(await applicationDbContext.ToListAsync());
+            _context = context;
+            _userManager = userManager;
+            _projectService = projectService;
+            _lookupService = lookupService;
+            _ticketService = ticketService;
+            _fileService = fileService;
+            _historyService = historyService;
         }
+
+
 
         public async Task<IActionResult> AllTickets()
         {
@@ -128,7 +126,25 @@ namespace IssueTracker.Controllers
         {
             if(model.DeveloperId != null)
             {
-                await _ticketService.AssignTicketAsync(model.Ticket.Id,model.DeveloperId);
+                BTUser btUser = await _userManager.GetUserAsync(User);
+                //old Ticket
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                
+                try
+                {
+                    await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                //new ticket 
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
+
                 return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
             }
 
@@ -189,16 +205,27 @@ namespace IssueTracker.Controllers
             {
 
 
-                ticket.Created = DateTimeOffset.Now;
-                ticket.OwnerUserId = btUser.Id;
+                try
+                {
+                    ticket.Created = DateTimeOffset.Now;
+                    ticket.OwnerUserId = btUser.Id;
 
-                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
 
-                await _ticketService.AddNewTicketAsync(ticket);
+                    await _ticketService.AddNewTicketAsync(ticket);
 
-                // TODO: Ticket History
+                    // TODO: Ticket History
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _historyService.AddHistoryAsync(null, newTicket, btUser.Id);
 
-                // TODO: Ticket Notification
+
+                    // TODO: Ticket Notification
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
 
 
                 return RedirectToAction(nameof(Index));
@@ -258,6 +285,8 @@ namespace IssueTracker.Controllers
             if (ModelState.IsValid)
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+
 
                 try
                 {
@@ -276,9 +305,10 @@ namespace IssueTracker.Controllers
                     }
                 }
 
-                // ToDo: Add Ticket History
-
-                return RedirectToAction(nameof(Index));
+                // Ticket History
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+                return RedirectToAction(nameof(AllTickets));
             }
 
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
@@ -300,6 +330,10 @@ namespace IssueTracker.Controllers
                     ticketComment.Created= DateTimeOffset.Now;
 
                     await _ticketService.AddTicketCommentAsync(ticketComment);
+                    
+                    
+                    //Add History
+                    await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
                 }
                 catch (Exception)
                 {
@@ -318,14 +352,26 @@ namespace IssueTracker.Controllers
 
 			if (ModelState.IsValid && ticketAttachment.FormFile != null)
             {
-				ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
-				ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
-				ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+                try
+                {
+                    ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+                    ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                    ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
 
-				ticketAttachment.Created = DateTimeOffset.Now;
-				ticketAttachment.UserId = _userManager.GetUserId(User);
+                    ticketAttachment.Created = DateTimeOffset.Now;
+                    ticketAttachment.UserId = _userManager.GetUserId(User);
 
-				await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+                    await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+
+                    // Add History
+                    await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
 				statusMessage = "Success: New attachment added to Ticket.";
 			}
 			else

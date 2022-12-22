@@ -145,15 +145,16 @@
                                                 }
                                                 else
                                                 {
-                                                    <img class="" src="~/img/defaultUser1.png" alt="User Image">
+                                                    <img class="" style="width:30px;height:20;" src="~/img/defaultUser1.png" alt="User Image">
 
                                                 }
-                                                <div class="">
-                                                    <span class="">@member.FullName</span>
-                                                    <span class="">@((await UserManager.GetRolesAsync(member)).FirstOrDefault())</span>
-                                                </div>
+                                                
                                             </div>
                                         </a>
+                                        <div class="">
+                                            <span class="">@member.FullName</span>
+                                            <span class="" style="font-size:x-small">[@((await UserManager.GetRolesAsync(member)).FirstOrDefault())]</span>
+                                        </div>
                                     </li>
                                 }
                             </ul>

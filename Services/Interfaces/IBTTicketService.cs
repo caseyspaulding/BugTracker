@@ -13,7 +13,7 @@ namespace IssueTracker.Services.Interfaces
 		public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
 		public Task AddTicketCommentAsync(TicketComment ticketComment);
 
-
+        public Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId);   
 
         public Task AssignTicketAsync(int ticketId, string userId);
         public Task<List<Ticket>> GetArchivedTicketsAsync(int companyId);
