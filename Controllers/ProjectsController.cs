@@ -14,13 +14,14 @@ using IssueTracker.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.Design;
 using IssueTracker.Services;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace IssueTracker.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
-        
+        private readonly ApplicationDbContext _context;
         private readonly IBTRolesService _rolesService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
@@ -28,7 +29,7 @@ namespace IssueTracker.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTCompanyInfoService _companyInfoService;
 
-        public ProjectsController(
+        public ProjectsController(ApplicationDbContext context,
                                   IBTRolesService rolesService,
                                   IBTLookupService lookupService,
                                   IBTFileService fileService,
@@ -36,7 +37,7 @@ namespace IssueTracker.Controllers
                                   UserManager<BTUser> userManager,
                                   IBTCompanyInfoService companyInfoService)
         {
-       
+            _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -84,7 +85,7 @@ namespace IssueTracker.Controllers
             return View(projects);
         }
 
-
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -96,6 +97,7 @@ namespace IssueTracker.Controllers
             return View(projects);
         }
 
+        [Authorize(Roles="Admin")]
         [HttpGet]
         public async Task<IActionResult> AssignPM(int projectId)
         {
@@ -109,6 +111,7 @@ namespace IssueTracker.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
@@ -123,6 +126,7 @@ namespace IssueTracker.Controllers
         }
 
 
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpGet]   
         public async Task<IActionResult> AssignMembers(int id)
         {
@@ -143,6 +147,7 @@ namespace IssueTracker.Controllers
             return View(model); 
         }
 
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
@@ -198,6 +203,7 @@ namespace IssueTracker.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Create()
         {
 
@@ -217,6 +223,7 @@ namespace IssueTracker.Controllers
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
@@ -252,13 +259,14 @@ namespace IssueTracker.Controllers
                 }
 
                 // TODO: Redirect to All Projects
-                return RedirectToAction("Index");
+               // return RedirectToAction("AllProjects");
             }
                 
             return RedirectToAction("Create");
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -279,6 +287,7 @@ namespace IssueTracker.Controllers
         // POST: Projects/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
@@ -319,6 +328,7 @@ namespace IssueTracker.Controllers
         }
 
         // GET: Projects/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -338,6 +348,7 @@ namespace IssueTracker.Controllers
         }
 
         // POST: Projects/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -351,6 +362,7 @@ namespace IssueTracker.Controllers
         }
 
         // GET: Projects/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id == null)
@@ -370,6 +382,7 @@ namespace IssueTracker.Controllers
         }
 
         // POST: Projects/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)

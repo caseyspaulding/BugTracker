@@ -15,6 +15,7 @@ using System.IO;
 
 namespace IssueTracker.Controllers
 {
+    [Authorize] 
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -108,7 +109,7 @@ namespace IssueTracker.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int id)
         {
@@ -120,6 +121,7 @@ namespace IssueTracker.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
@@ -383,8 +385,9 @@ namespace IssueTracker.Controllers
 			return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
 		}
 
-		// GET: Tickets/Archive/5
-		public async Task<IActionResult> Archive(int? id)
+        // GET: Tickets/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> Archive(int? id)
         {
             if (id == null || _context.Tickets == null)
             {
@@ -412,6 +415,7 @@ namespace IssueTracker.Controllers
         }
 
         // POST: Tickets/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -428,6 +432,7 @@ namespace IssueTracker.Controllers
         }
 
         // GET: Tickets/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id == null || _context.Tickets == null)
