@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-IssueTracker-2d8a11fe-738e-43bb-a7cf-5d44fe567ee5</UserSecretsId>
 	  <InvariantGlobalization>true</InvariantGlobalization>
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	  <DockerfileContext>.</DockerfileContext>
 	
   </PropertyGroup>
 
@@ -96,6 +98,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.11" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
     <PackageReference Include="MimeKit" Version="3.4.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
