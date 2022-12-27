@@ -59,7 +59,7 @@ namespace IssueTracker.Data
             var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             //Migration: This is the programmatic equivalent to Update-Database
-            //await dbContextSvc.Database.MigrateAsync();
+            await dbContextSvc.Database.MigrateAsync();
 
 
             //Custom  Bug Tracker Seed Methods
