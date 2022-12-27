@@ -1,5 +1,4 @@
-﻿using IssueTracker.Controllers;
-using IssueTracker.Models;
+﻿using IssueTracker.Models;
 
 namespace IssueTracker.Services.Interfaces
 {
@@ -9,8 +8,8 @@ namespace IssueTracker.Services.Interfaces
 
         public Task<List<TicketStatus>> GetTicketStatusesAsync();
 
-        public Task<List<TicketType>> GetTicketTypesAsync();   
-        
+        public Task<List<TicketType>> GetTicketTypesAsync();
+
         public Task<List<ProjectPriority>> GetProjectPrioritiesAsync();
 
 

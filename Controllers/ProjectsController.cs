@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using IssueTracker.Data;
+using IssueTracker.Extensions;
+using IssueTracker.Models;
+using IssueTracker.Models.Enums;
+using IssueTracker.Models.ViewModels;
+using IssueTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using IssueTracker.Data;
-using IssueTracker.Models;
-using IssueTracker.Extensions;
-using IssueTracker.Models.ViewModels;
-using IssueTracker.Services.Interfaces;
-using IssueTracker.Models.Enums;
-using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.Design;
-using IssueTracker.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace IssueTracker.Controllers
 {
-    [Authorize]
+
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -46,7 +40,7 @@ namespace IssueTracker.Controllers
             _companyInfoService = companyInfoService;
         }
 
-   
+
         public async Task<IActionResult> MyProjects()
         {
             string userId = _userManager.GetUserId(User);
@@ -85,7 +79,7 @@ namespace IssueTracker.Controllers
             return View(projects);
         }
 
-        [Authorize(Roles="Admin")]
+
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -97,7 +91,7 @@ namespace IssueTracker.Controllers
             return View(projects);
         }
 
-        [Authorize(Roles="Admin")]
+
         [HttpGet]
         public async Task<IActionResult> AssignPM(int projectId)
         {
@@ -111,7 +105,7 @@ namespace IssueTracker.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
@@ -122,12 +116,12 @@ namespace IssueTracker.Controllers
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }
-            return RedirectToAction(nameof(AssignPM), new { projectId = model.Project.Id});
+            return RedirectToAction(nameof(AssignPM), new { projectId = model.Project.Id });
         }
 
 
-        [Authorize(Roles = "Admin, ProjectManager")]
-        [HttpGet]   
+
+        [HttpGet]
         public async Task<IActionResult> AssignMembers(int id)
         {
             ProjectMembersViewModel model = new();
@@ -136,45 +130,45 @@ namespace IssueTracker.Controllers
 
             model.Project = await _projectService.GetProjectByIdAsync(id, companyId);
 
-            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Developer),companyId);
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId);
             List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId);
 
-            List<BTUser> companyMembers = developers.Concat(submitters).ToList();   
+            List<BTUser> companyMembers = developers.Concat(submitters).ToList();
 
-            List<string> projectMembers = model.Project.Members.Select(m=>m.Id).ToList();
+            List<string> projectMembers = model.Project.Members.Select(m => m.Id).ToList();
             model.Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers);
 
-            return View(model); 
+            return View(model);
         }
 
-        [Authorize(Roles = "Admin, ProjectManager")]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
         {
-            if(model.SelectedUsers != null)
+            if (model.SelectedUsers != null)
             {
                 List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id)).Select(m => m.Id).ToList();
 
                 // Remove current members
-                foreach(string member in memberIds)
+                foreach (string member in memberIds)
                 {
-                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id); 
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
                 }
 
                 // Add selected members
-                foreach(string member in model.SelectedUsers)
+                foreach (string member in model.SelectedUsers)
                 {
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
 
                 // Go to project details
-                return RedirectToAction("Details", "Projects", new { id = model.Project.Id});
+                return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
 
 
             }
 
-            return RedirectToAction(nameof(AssignMembers), new {id= model.Project.Id}); 
+            return RedirectToAction(nameof(AssignMembers), new { id = model.Project.Id });
         }
 
 
@@ -188,7 +182,7 @@ namespace IssueTracker.Controllers
 
             int companyId = User.Identity.GetCompanyId().Value;
 
-            Project project = await _projectService.GetProjectByIdAsync(id.Value,companyId);
+            Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
             //var project = await _context.Projects
             //    .Include(p => p.Company)
             //    .Include(p => p.ProjectPriority)
@@ -203,7 +197,7 @@ namespace IssueTracker.Controllers
         }
 
         // GET: Projects/Create
-        [Authorize(Roles = "Admin, ProjectManager")]
+
         public async Task<IActionResult> Create()
         {
 
@@ -215,8 +209,8 @@ namespace IssueTracker.Controllers
 
             model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
-            
-          
+
+
             return View(model);
         }
 
@@ -228,20 +222,20 @@ namespace IssueTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
-            if(model != null)
+            if (model != null)
             {
                 int companyId = User.Identity.GetCompanyId().Value;
 
                 try
                 {
-                    if(model.Project.ImageFormFile != null)
+                    if (model.Project.ImageFormFile != null)
                     {
                         model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
                         model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
                         model.Project.ImageContentType = model.Project.ImageFormFile.ContentType;
                     }
 
-                    model.Project.CompanyId= companyId;
+                    model.Project.CompanyId = companyId;
 
                     await _projectService.AddNewProjectAsync(model.Project);
 
@@ -259,9 +253,9 @@ namespace IssueTracker.Controllers
                 }
 
                 // TODO: Redirect to All Projects
-               // return RedirectToAction("AllProjects");
+                // return RedirectToAction("AllProjects");
             }
-                
+
             return RedirectToAction("Create");
         }
 
@@ -337,7 +331,7 @@ namespace IssueTracker.Controllers
             }
 
             int companyId = User.Identity.GetCompanyId().Value;
-            var project = await _projectService.GetProjectByIdAsync(id.Value,companyId);
+            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
 
             if (project == null)
             {
@@ -357,7 +351,7 @@ namespace IssueTracker.Controllers
 
             var project = await _projectService.GetProjectByIdAsync(id, companyId);
             await _projectService.ArchiveprojectAsync(project);
-           
+
             return RedirectToAction(nameof(Index));
         }
 

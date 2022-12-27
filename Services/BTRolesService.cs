@@ -11,13 +11,13 @@ namespace IssueTracker.Services
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<BTUser> _userManager;
-        
-        public BTRolesService(ApplicationDbContext context, 
+
+        public BTRolesService(ApplicationDbContext context,
                                 RoleManager<IdentityRole> roleManager,
-                                UserManager<BTUser> userManager) 
-        { 
+                                UserManager<BTUser> userManager)
+        {
             _context = context;
-            _roleManager = roleManager;  
+            _roleManager = roleManager;
             _userManager = userManager;
         }
 
@@ -37,7 +37,7 @@ namespace IssueTracker.Services
 
                 throw;
             }
-        } 
+        }
         #endregion
 
 
@@ -81,13 +81,13 @@ namespace IssueTracker.Services
         public async Task<bool> IsUserInRoleAsync(BTUser user, string roleName)
         {
             bool result = await _userManager.IsInRoleAsync(user, roleName);
-            return result;  
+            return result;
         }
 
         public async Task<bool> RemoveUserFromRoleAsync(BTUser user, string roleName)
         {
             bool result = (await _userManager.RemoveFromRoleAsync(user, roleName)).Succeeded;
-            return result;  
+            return result;
         }
 
         public async Task<bool> RemoveUserFromRolesAsync(BTUser user, IEnumerable<string> roles)

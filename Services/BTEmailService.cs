@@ -14,7 +14,7 @@ namespace IssueTracker.Services
         {
             _mailSettings = mailSettings.Value;
         }
-        
+
         public async Task SendEmailAsync(string emailTo, string subject, string htmlMessage)
         {
             MimeMessage email = new();

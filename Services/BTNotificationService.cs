@@ -78,7 +78,7 @@ namespace IssueTracker.Services
         {
             BTUser btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == notification.RecipientId);
 
-            if(btUser != null)
+            if (btUser != null)
             {
                 string btUserEmail = btUser.Email;
                 string message = notification.Message;

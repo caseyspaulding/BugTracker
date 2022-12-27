@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace IssueTracker.Models
 {
@@ -28,7 +27,7 @@ namespace IssueTracker.Models
         [DisplayName("Team Member")]
         public string UserId { get; set; } //Foreign Key - Relational Database
 
-        
+
         //Navigation properties
         public virtual Ticket Ticket { get; set; }
 

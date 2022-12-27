@@ -8,13 +8,13 @@ namespace IssueTracker.Services
     public class BTCompanyInfoService : IBTCompanyInfoService
     {
         private readonly ApplicationDbContext _context;
-        
-        public BTCompanyInfoService(ApplicationDbContext context) 
+
+        public BTCompanyInfoService(ApplicationDbContext context)
         {
             _context = context;
-        
+
         }
-        
+
         public async Task<List<BTUser>> GetAllMembersAsync(int companyId)
         {
             List<BTUser> result = new();
@@ -31,7 +31,7 @@ namespace IssueTracker.Services
             result = await _context.Projects.Where(p => p.CompanyId == companyId)
                                             .Include(p => p.Members)
                                             .Include(p => p.Tickets)
-                                                .ThenInclude(t=>t.Comments)
+                                                .ThenInclude(t => t.Comments)
                                             .Include(p => p.Tickets)
                                                 .ThenInclude(t => t.Attachments)
                                             .Include(p => p.Tickets)
@@ -48,7 +48,7 @@ namespace IssueTracker.Services
                                                 .ThenInclude(t => t.TicketPriority)
                                             .Include(p => p.Tickets)
                                                 .ThenInclude(t => t.TicketType)
-                      // --- Query Methods .ThenInclude using link available only after .Include --- //
+                                            // --- Query Methods .ThenInclude using link available only after .Include --- //
                                             .Include(p => p.ProjectPriority)
                                             .ToListAsync();
             // ---- .Include eager loads the members, tickets and project priority  ----- ///
@@ -74,9 +74,9 @@ namespace IssueTracker.Services
             if (companyId != null)
             {
                 result = await _context.Companies
-                                        .Include(c=>c.Members)
-                                        .Include(c=>c.Projects)
-                                        .Include(c=>c.Invites)
+                                        .Include(c => c.Members)
+                                        .Include(c => c.Projects)
+                                        .Include(c => c.Invites)
                                         .FirstOrDefaultAsync(c => c.Id == companyId);
             }
             return result;

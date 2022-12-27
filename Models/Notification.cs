@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Framework;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using RequiredAttribute = Microsoft.Build.Framework.RequiredAttribute;
 
@@ -7,7 +6,7 @@ namespace IssueTracker.Models
 {
     public class Notification
     {
-        
+
         // -- Primary Key
         public int Id { get; set; }
 

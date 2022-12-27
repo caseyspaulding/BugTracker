@@ -67,23 +67,23 @@ namespace IssueTracker.Services
             }
 
         }
-		#endregion
+        #endregion
 
-		public async Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment)
-		{
-			try
-			{
-				await _context.AddAsync(ticketAttachment);
-				await _context.SaveChangesAsync();
-			}
-			catch (Exception)
-			{
+        public async Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment)
+        {
+            try
+            {
+                await _context.AddAsync(ticketAttachment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
 
-				throw;
-			}
-		}
+                throw;
+            }
+        }
 
-		public async Task AssignTicketAsync(int ticketId, string userId)
+        public async Task AssignTicketAsync(int ticketId, string userId)
         {
             Ticket ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
             try
@@ -196,23 +196,23 @@ namespace IssueTracker.Services
             }
         }
 
-		public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
-		{
-			try
-			{
-				TicketAttachment ticketAttachment = await _context.TicketAttachments
-																  .Include(t => t.User)
-																  .FirstOrDefaultAsync(t => t.Id == ticketAttachmentId);
-				return ticketAttachment;
-			}
-			catch (Exception)
-			{
+        public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+        {
+            try
+            {
+                TicketAttachment ticketAttachment = await _context.TicketAttachments
+                                                                  .Include(t => t.User)
+                                                                  .FirstOrDefaultAsync(t => t.Id == ticketAttachmentId);
+                return ticketAttachment;
+            }
+            catch (Exception)
+            {
 
-				throw;
-			}
-		}
+                throw;
+            }
+        }
 
-		public async Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
+        public async Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
         {
             int typeId = (await LookupTicketTypeIdAsync(typeName)).Value;
 
@@ -285,7 +285,7 @@ namespace IssueTracker.Services
 
                 throw;
             }
-        } 
+        }
         #endregion
 
         public async Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId)
@@ -333,8 +333,8 @@ namespace IssueTracker.Services
                                      .Include(t => t.TicketType)
                                      .Include(t => t.Comments)
                                      .Include(t => t.Attachments)
-									 .Include(t => t.History)
-									 .FirstOrDefaultAsync(t => t.Id == ticketId);
+                                     .Include(t => t.History)
+                                     .FirstOrDefaultAsync(t => t.Id == ticketId);
             }
             catch (Exception)
             {
@@ -496,7 +496,7 @@ namespace IssueTracker.Services
 
                 throw;
             }
-        } 
+        }
         #endregion
         public async Task UpdateTicketAsync(Ticket ticket)
         {

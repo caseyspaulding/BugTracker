@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Cart\**" />
+    <Compile Remove="Views\ComposeMail\**" />
+    <Compile Remove="Views\Pricing\**" />
+    <Compile Remove="Views\ProductDetails\**" />
+    <Compile Remove="Views\Products\**" />
     <Compile Remove="Views\ProjectPriorities\**" />
     <Compile Remove="Views\TicketAttachments\**" />
     <Compile Remove="Views\TicketComments\**" />
@@ -15,6 +20,12 @@
     <Compile Remove="Views\TicketPriorities\**" />
     <Compile Remove="Views\TicketStatus\**" />
     <Compile Remove="Views\TicketTypes\**" />
+    <Compile Remove="Views\Wishlist\**" />
+    <Content Remove="Views\Cart\**" />
+    <Content Remove="Views\ComposeMail\**" />
+    <Content Remove="Views\Pricing\**" />
+    <Content Remove="Views\ProductDetails\**" />
+    <Content Remove="Views\Products\**" />
     <Content Remove="Views\ProjectPriorities\**" />
     <Content Remove="Views\TicketAttachments\**" />
     <Content Remove="Views\TicketComments\**" />
@@ -22,6 +33,12 @@
     <Content Remove="Views\TicketPriorities\**" />
     <Content Remove="Views\TicketStatus\**" />
     <Content Remove="Views\TicketTypes\**" />
+    <Content Remove="Views\Wishlist\**" />
+    <EmbeddedResource Remove="Views\Cart\**" />
+    <EmbeddedResource Remove="Views\ComposeMail\**" />
+    <EmbeddedResource Remove="Views\Pricing\**" />
+    <EmbeddedResource Remove="Views\ProductDetails\**" />
+    <EmbeddedResource Remove="Views\Products\**" />
     <EmbeddedResource Remove="Views\ProjectPriorities\**" />
     <EmbeddedResource Remove="Views\TicketAttachments\**" />
     <EmbeddedResource Remove="Views\TicketComments\**" />
@@ -29,6 +46,12 @@
     <EmbeddedResource Remove="Views\TicketPriorities\**" />
     <EmbeddedResource Remove="Views\TicketStatus\**" />
     <EmbeddedResource Remove="Views\TicketTypes\**" />
+    <EmbeddedResource Remove="Views\Wishlist\**" />
+    <None Remove="Views\Cart\**" />
+    <None Remove="Views\ComposeMail\**" />
+    <None Remove="Views\Pricing\**" />
+    <None Remove="Views\ProductDetails\**" />
+    <None Remove="Views\Products\**" />
     <None Remove="Views\ProjectPriorities\**" />
     <None Remove="Views\TicketAttachments\**" />
     <None Remove="Views\TicketComments\**" />
@@ -36,6 +59,7 @@
     <None Remove="Views\TicketPriorities\**" />
     <None Remove="Views\TicketStatus\**" />
     <None Remove="Views\TicketTypes\**" />
+    <None Remove="Views\Wishlist\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +73,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\3ds.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\aac.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\ai.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\avi.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\bmp.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\cad.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\cdr.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\css.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\dat.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\default.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\dll.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\images\files\dmg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="3.4.3" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.11" />
@@ -59,6 +98,133 @@
     <PackageReference Include="MimeKit" Version="3.4.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
     <PackageReference Include="PlantUmlClassDiagramGenerator.Attributes" Version="1.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\assets\images\files\doc.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\docx.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\eps.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\fla.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\flv.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\gif.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\html.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\indd.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\iso.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\jpg.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\js.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\midi.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\mov.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\mp3.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\mpg.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\pdf.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\php.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\png.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\ppt.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\ps.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\psd.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\raw.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\sql.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\svg.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\tif.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\txt.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\wmv.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\xls.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\xlsx.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\xml.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\assets\images\files\zip.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 ﻿using IssueTracker.Models;
-using System.Security.Cryptography.X509Certificates;
 
 namespace IssueTracker.Services.Interfaces
 {
@@ -37,8 +36,8 @@ namespace IssueTracker.Services.Interfaces
 
         public Task<List<Project>> GetUserProjectsAsync(string userId);
 
-        public Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId);  
-        
+        public Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId);
+
         public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
 
         public Task<int> LookupProjectPriorityId(string priorityName);

@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace IssueTracker.Models
 {
     public class Invite
     {
         // ---- Primary Key -- //
-        public int Id { get; set; }  
+        public int Id { get; set; }
         // Entity framework recognizes keyword Id as primary key for table
 
         [DisplayName("Date Sent")]
@@ -15,7 +14,7 @@ namespace IssueTracker.Models
         [DisplayName("Join Date")]
         public DateTimeOffset JoinDate { get; set; }
 
-        [DisplayName("Code")]   
+        [DisplayName("Code")]
         public Guid CompanyToken { get; set; }  // ----- Globally Unique Identifier ------ ///
 
         [DisplayName("Company")]

@@ -1,5 +1,4 @@
-﻿using IssueTracker.Controllers;
-using IssueTracker.Data;
+﻿using IssueTracker.Data;
 using IssueTracker.Models;
 using IssueTracker.Models.Enums;
 using IssueTracker.Services.Interfaces;
@@ -288,7 +287,7 @@ namespace IssueTracker.Services
             throw new NotImplementedException();
         }
 
-        
+
 
         public async Task<List<Project>> GetUnassignedProjectAsync(int companyId)
         {
@@ -302,9 +301,9 @@ namespace IssueTracker.Services
                                          .Where(p => p.CompanyId == companyId)
                                          .ToListAsync();
 
-                foreach(Project project in projects)
+                foreach (Project project in projects)
                 {
-                    if((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0) 
+                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0)
                     {
                         result.Add(project);
                     }

@@ -21,7 +21,7 @@ namespace IssueTracker.Models
         public string Description { get; set; }
 
         [DisplayName("Start Date")]
-        [DataType(DataType.Date)] 
+        [DataType(DataType.Date)]
         public DateTimeOffset StartDate { get; set; }
 
         [DisplayName("End Date")]
@@ -52,7 +52,7 @@ namespace IssueTracker.Models
         public virtual ProjectPriority ProjectPriority { get; set; }    // -- Look Up Table -- //
 
         // --- One to Many Relationship with ticket --- //
-        public virtual ICollection<BTUser> Members { get; set; } = new HashSet<BTUser>(); 
+        public virtual ICollection<BTUser> Members { get; set; } = new HashSet<BTUser>();
         public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
 
 

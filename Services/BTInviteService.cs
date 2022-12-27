@@ -13,12 +13,12 @@ namespace IssueTracker.Services
         {
             _context = context;
         }
-        
+
         public async Task<bool> AcceptInviteAsync(Guid? token, string userId, int companyId)
         {
-            Invite invite = await _context.Invites.FirstOrDefaultAsync(i=>i.CompanyToken == token);
+            Invite invite = await _context.Invites.FirstOrDefaultAsync(i => i.CompanyToken == token);
 
-            if(invite == null)
+            if (invite == null)
             {
                 return false;
             }
@@ -26,7 +26,7 @@ namespace IssueTracker.Services
             try
             {
                 invite.IsValid = false;
-                invite.InviteeId= userId;
+                invite.InviteeId = userId;
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -57,8 +57,8 @@ namespace IssueTracker.Services
             try
             {
                 bool result = await _context.Invites.Where(i => i.CompanyId == companyId)
-                                                    .AnyAsync(i => i.CompanyToken == token && i.InviteeEmail == email); 
-                
+                                                    .AnyAsync(i => i.CompanyToken == token && i.InviteeEmail == email);
+
                 return result;
             }
             catch (Exception)
@@ -136,6 +136,6 @@ namespace IssueTracker.Services
 
             }
             return result;
-        }       
+        }
     }
 }

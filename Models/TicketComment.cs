@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Net.Sockets;
 
 namespace IssueTracker.Models
 {
@@ -7,7 +6,7 @@ namespace IssueTracker.Models
     {
         public int Id { get; set; }
 
-        [DisplayName("Member Comment")] 
+        [DisplayName("Member Comment")]
         public string Comment { get; set; }
 
         [DisplayName("Date")]

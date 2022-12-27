@@ -14,7 +14,7 @@ namespace IssueTracker.Controllers
         private readonly IBTRolesService _rolesService;
         private readonly IBTCompanyInfoService _companyInfoService;
 
-        public UserRolesController(IBTRolesService rolesService, 
+        public UserRolesController(IBTRolesService rolesService,
                                    IBTCompanyInfoService companyInfoService)
         {
             _rolesService = rolesService;
@@ -35,15 +35,15 @@ namespace IssueTracker.Controllers
             // Get all company users
 
             List<BTUser> users = await _companyInfoService.GetAllMembersAsync(companyId);
-        
+
             // Loop over the users to populate the ViewModel
             // - instantiate ViewModel
             // - use _rolesService
             // - Create multi-selects
-            foreach(BTUser user in users)
+            foreach (BTUser user in users)
             {
                 ManageUserRolesViewModel viewModel = new();
-                viewModel.BTUser= user;
+                viewModel.BTUser = user;
                 IEnumerable<string> selected = await _rolesService.GetUserRolesAsync(user);
                 viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(),
                                             "Name", "Name", selected);
@@ -52,12 +52,12 @@ namespace IssueTracker.Controllers
             }
 
             // Return the model to the View
-            
+
             return View(model);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]  
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
         {
 
@@ -76,12 +76,12 @@ namespace IssueTracker.Controllers
             if (!string.IsNullOrEmpty(userRole))
             {
                 // Remove User from their roles
-                if(await _rolesService.RemoveUserFromRolesAsync(btUser, roles))
+                if (await _rolesService.RemoveUserFromRolesAsync(btUser, roles))
                 {
                     // Add User to the new role
                     await _rolesService.AddUserToRoleAsync(btUser, userRole);
                 }
-                
+
             }
 
 

@@ -5,7 +5,7 @@ namespace IssueTracker.Services
     public class BTFileService : IBTFileService
     {
         private readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
-        
+
         public string ConvertByteArrayToFile(byte[] fileData, string extension)
         {
             try
@@ -49,7 +49,7 @@ namespace IssueTracker.Services
                 counter++;
             }
 
-            return string.Format("{0:n1}{1}",fileSize, suffixes[counter]);    
+            return string.Format("{0:n1}{1}", fileSize, suffixes[counter]);
         }
 
         public string GetFileIcon(string file)

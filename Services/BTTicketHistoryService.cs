@@ -15,7 +15,7 @@ namespace IssueTracker.Services
             _context = context;
         }
 
-        
+
         public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
         {
             // NEW Ticket has been added
@@ -182,7 +182,7 @@ namespace IssueTracker.Services
                 };
 
                 await _context.TicketHistories.AddAsync(history);
-                await _context.SaveChangesAsync();  
+                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -220,7 +220,7 @@ namespace IssueTracker.Services
             try
             {
                 Project project = await _context.Projects
-                    
+
                     .Where(p => p.CompanyId == companyId)
                     .Include(p => p.Tickets)
                     .ThenInclude(t => t.History)

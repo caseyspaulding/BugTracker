@@ -8,6 +8,6 @@ namespace IssueTracker.Models.ViewModels
 
         public SelectList PMList { get; set; }
 
-        public string PMID { get; set; }    
+        public string PMID { get; set; }
     }
 }

@@ -5,7 +5,7 @@
         /// <summary>
         /// Properties
         /// </summary>
-        
+
         public string Mail { get; set; }
 
         public string DisplayName { get; set; }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Framework;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using RequiredAttribute = System.ComponentModel.DataAnnotations.RequiredAttribute;
 
@@ -25,7 +24,7 @@ namespace IssueTracker.Models
 
         [DataType(DataType.Date)]
         [DisplayName("Updated")]
-        public DateTimeOffset? Updated { get; set; }  
+        public DateTimeOffset? Updated { get; set; }
 
         // -- ? Means Database can accept NULL for this field 
 
@@ -55,9 +54,9 @@ namespace IssueTracker.Models
         [DisplayName("Ticket Priority")]
         public string DeveloperUserId { get; set; }
 
-       // -----   Navigation properties    -----    //
+        // -----   Navigation properties    -----    //
 
-       // ---- Navication properties are not stored in the database ---- //
+        // ---- Navication properties are not stored in the database ---- //
 
         public virtual Project Project { get; set; }
         public virtual TicketType TicketType { get; set; }
