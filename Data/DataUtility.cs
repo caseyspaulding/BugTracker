@@ -2,7 +2,6 @@
 using IssueTracker.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace IssueTracker.Data
 {
