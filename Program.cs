@@ -54,13 +54,8 @@ var app = builder.Build();
 // ---- Data Utility ------------- //
 
 var scope = app.Services.CreateScope();
-await DataHelper.ManageDataAsync(scope.ServiceProvider);
-//await DataUtility.ManageDataAsync(app);
-
-
 
 await DataUtility.ManageDataAsync(app);
-
 
 
 
