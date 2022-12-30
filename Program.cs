@@ -55,7 +55,7 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 
-await DataUtility.ManageDataAsync(app);
+//await DataUtility.ManageDataAsync(app);
 
 
 

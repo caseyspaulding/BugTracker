@@ -1,6 +1,11 @@
 {
-  
-    
+  "dependencies": {
+    "mssql1": {
+      "type": "mssql.local",
+      "connectionId": "ConnectionStrings:DefaultConnection"
+    },
+
+
     "postgresql1": {
       "type": "postgresql",
       "connectionId": "ConnectionStrings:DefaultConnection",

@@ -1,5 +1,10 @@
 {
-  
+  "dependencies": {
+    "mssql1": {
+      "type": "mssql.local",
+      "connectionId": "ConnectionStrings:DefaultConnection"
+    },
+
     "postgresql1": {
       "containerPorts": "5432:5432",
       "secretStore": "LocalSecretsFile",
